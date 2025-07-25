@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { link } from 'node:fs';
 
 type Task = {
   id: number;
@@ -217,6 +218,16 @@ export default function TaskListView({
           <li className="text-center text-gray-400">Tidak ada tugas.</li>
         )}
       </ul>
+      <div>
+<Link href="userserver/logs">
+  <button className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded-full shadow-lg">
+    📝 Log
+  </button>
+</Link>
+
+
+      </div>
     </div>
+    
   );
 }

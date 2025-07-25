@@ -40,10 +40,18 @@ export default function TaskEditContainer() {
     const fetchTask = async () => {
       try {
         const res = await fetch(`${TASKS_API}/${id}`, { headers: getHeaders() });
-        if (res.status === 500) {
-          router.replace('/expired');
+
+        if (res.status === 401) {
+          localStorage.setItem('token_expired', 'true');
+          router.replace('/login');
           return;
         }
+
+        if (res.status === 500) {
+          router.replace('/login');
+          return;
+        }
+
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
         const data = json.data;
@@ -85,8 +93,14 @@ export default function TaskEditContainer() {
         body: JSON.stringify({ ...task, is_done: task.is_done }),
       });
 
+      if (res.status === 401) {
+        localStorage.setItem('token_expired', 'true');
+        router.replace('/login');
+        return;
+      }
+
       if (res.status === 500) {
-        router.replace('/expired');
+        router.replace('/login');
         return;
       }
 

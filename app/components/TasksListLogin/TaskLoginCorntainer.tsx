@@ -1,6 +1,5 @@
 'use client';
-
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { TASKS_API_LOGIN } from '@/lib/api';
 import TaskLoginView from './TaskLoginview';
@@ -10,11 +9,38 @@ export default function TaskLoginContainer() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [alert, setAlert] = useState('');
+  const alertTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const showAlert = (msg: string) => {
     setAlert(msg);
-    setTimeout(() => setAlert(''), 4000);
+
+
+    if (alertTimeoutRef.current) {
+      clearTimeout(alertTimeoutRef.current);
+    }
+
+
+    alertTimeoutRef.current = setTimeout(() => {
+      setAlert('');
+      alertTimeoutRef.current = null;
+    }, 5000); 
   };
+
+useEffect(() => {
+  const expired = localStorage.getItem('token_expired');
+  const token = localStorage.getItem('token');
+
+  if (expired && token) {
+    showAlert('⚠️Sesi kamu telah habis. Silakan login kembali⚠️');
+    localStorage.removeItem('token_expired');
+  }
+
+  return () => {
+    if (alertTimeoutRef.current) {
+      clearTimeout(alertTimeoutRef.current);
+    }
+  };
+}, []);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -55,7 +81,7 @@ export default function TaskLoginContainer() {
       localStorage.setItem('user', JSON.stringify(user));
       if (expiresAt) localStorage.setItem('expires_at', expiresAt);
 
-      showAlert(`Welcome ${name}👤`);
+      showAlert(`Welcome ${name} 👤`);
       setTimeout(() => router.push('/userserver'), 1000);
     } catch {
       showAlert('Something went wrong. Please try again.');

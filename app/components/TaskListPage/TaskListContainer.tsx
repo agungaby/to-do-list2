@@ -15,7 +15,8 @@ type Task = {
 
 function notifyExpiredToken() {
   console.warn('401');
-  window.location.href = '/expired';
+  localStorage.setItem('token_expired', 'true'); 
+  window.location.href = '/login';
 }
 
 function checkToken(): boolean {

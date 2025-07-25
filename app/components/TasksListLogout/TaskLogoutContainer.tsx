@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { TASKS_API_LOGOUT } from '@/lib/api';
-import TaskLogoutView from './TaskLogoutview';
+import TaskLogoutView from './TaskLogoutView';
 
 type User = {
   id: number;
